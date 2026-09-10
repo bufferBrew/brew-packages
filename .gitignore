@@ -1,0 +1,12 @@
+# Dart/Flutter build and tool output
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+pubspec.lock
+
+# Editor / OS
+.idea/
+*.iml
+.DS_Store
