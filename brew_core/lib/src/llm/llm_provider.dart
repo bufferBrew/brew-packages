@@ -1,8 +1,8 @@
 /// The LLM providers every Brew app can be configured with.
 ///
 /// **This list mirrors `PROVIDER_SPECS` in
-/// `apps/BREW/supabase/functions/_shared/core_llm.ts` and the `core.llm_provider`
-/// enum in `apps/BREW/supabase/migrations/0041_core_llm.sql`.** There is no
+/// `brew/BREW/supabase/functions/_shared/core_llm.ts` and the `core.llm_provider`
+/// enum in `brew/BREW/supabase/migrations/0041_core_llm.sql`.** There is no
 /// generator; the TypeScript file is the source of truth and all three must
 /// agree. Adding a provider means touching all three deliberately, because a
 /// provider the settings screen offers but the Edge Function cannot speak to is

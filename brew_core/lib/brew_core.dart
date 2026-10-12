@@ -12,7 +12,7 @@
 /// **LLM provider settings.** API keys are stored once in `core.llm_configs`,
 /// encrypted, and are never returned to any client. Per-app model choices live
 /// separately in `core.llm_task_models` — see
-/// `apps/BREW/supabase/migrations/0041_core_llm.sql` for why the two are split.
+/// `brew/BREW/supabase/migrations/0041_core_llm.sql` for why the two are split.
 ///
 /// **Third-party connectors.** Notion, Todoist and friends are configured once
 /// in `core.connections`, encrypted the same way. `core.connectors` is a

@@ -116,5 +116,5 @@ lib/src/connections/
 
 ## Backing migrations
 
-* `apps/BREW/supabase/migrations/0041_core_llm.sql`
-* `apps/BREW/supabase/migrations/0042_core_connections.sql`
+* `brew/BREW/supabase/migrations/0041_core_llm.sql`
+* `brew/BREW/supabase/migrations/0042_core_connections.sql`
