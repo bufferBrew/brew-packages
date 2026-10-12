@@ -4,7 +4,7 @@ description: >-
   spacing, motion and shape as ThemeExtensions, a theme builder, and
   unopinionated building blocks for buttons, cards, states, auth and settings.
   Each app supplies its own palette, so apps look related, not identical.
-version: 0.1.1
+version: 0.1.2
 publish_to: none
 resolution: workspace
 

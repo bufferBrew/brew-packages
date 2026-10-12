@@ -162,6 +162,7 @@ class BrewEmailPasswordForm extends StatefulWidget {
     this.startInSignUp = false,
     this.describeError,
     this.minPasswordLength = 8,
+    this.submitVariant = BrewButtonVariant.primary,
   });
 
   final Future<String?> Function(String email, String password, bool signUp)
@@ -173,6 +174,10 @@ class BrewEmailPasswordForm extends StatefulWidget {
   /// has one, else `toString()`.
   final String Function(Object error)? describeError;
   final int minPasswordLength;
+
+  /// Primary by default. When an OAuth button above is the main way in, make
+  /// this secondary so the screen keeps one primary action.
+  final BrewButtonVariant submitVariant;
 
   @override
   State<BrewEmailPasswordForm> createState() => _BrewEmailPasswordFormState();
@@ -288,6 +293,7 @@ class _BrewEmailPasswordFormState extends State<BrewEmailPasswordForm> {
             const SizedBox(height: BrewSpacing.lg),
             BrewButton(
               label: _signUp ? 'Create account' : 'Sign in',
+              variant: widget.submitVariant,
               onPressed: _submit,
               loading: _busy,
               fullWidth: true,

@@ -319,6 +319,20 @@ void main() {
     });
   });
 
+  testWidgets('email form submit can step down to secondary', (tester) async {
+    await pumpBrew(
+      tester,
+      BrewEmailPasswordForm(
+        submitVariant: BrewButtonVariant.secondary,
+        onSubmit: (e, p, s) async => null,
+      ),
+    );
+    final button = tester.widget<BrewButton>(
+      find.widgetWithText(BrewButton, 'Sign in'),
+    );
+    expect(button.variant, BrewButtonVariant.secondary);
+  });
+
   testWidgets('BrewBackendSetupForm blocks invalid input', (tester) async {
     String? submitted;
     await pumpBrew(
