@@ -52,7 +52,7 @@ dependencies:
     git:
       url: https://github.com/bufferBrew/brew-packages.git
       path: brew_core
-      ref: v0.1.0   # bump deliberately; see the brew-packages README
+      ref: 9102a5b4101a92621e7005c2f20445a5d180d3df # v0.2.2
 ```
 
 ```dart

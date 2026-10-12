@@ -13,7 +13,7 @@ dependencies:
     git:
       url: https://github.com/bufferBrew/brew-packages.git
       path: brew_core
-      ref: v0.1.0
+      ref: 9102a5b4101a92621e7005c2f20445a5d180d3df # v0.2.2
 ```
 
 ## Packages
@@ -36,3 +36,8 @@ dependencies:
   `brew_ui`; composition stays in each app.
 - **Tag a release for every consumer-visible change**, and bump the `ref` in each
   app deliberately. Apps upgrade on their own schedule.
+- **Pin `ref` to the tag's commit SHA, not the tag name** (keep the tag in a
+  comment). `brew_auth` and `brew_ui` reach `brew_core` through an in-repo
+  path, which pub records as the commit SHA; an app that names the tag instead
+  has "two sources" for `brew_core` and fails to resolve. Get the SHA with
+  `git ls-remote https://github.com/bufferBrew/brew-packages.git 'refs/tags/vX.Y.Z^{}'`.
