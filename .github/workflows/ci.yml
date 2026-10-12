@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: format, analyze, test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # Pinned to match the Brew apps (see BREW/.github/workflows/ci.yml), so a
+      # stable bump can't break shared-package goldens before the apps move.
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.8
+          channel: stable
+          cache: true
+      # One resolve for the whole workspace.
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: flutter analyze
+      - name: Test each package that has tests
+        run: |
+          for pkg in $(sed -n 's/^  - //p' pubspec.yaml); do
+            if [ -d "$pkg/test" ]; then
+              echo "::group::flutter test $pkg"
+              (cd "$pkg" && flutter test --coverage) || exit 1
+              echo "::endgroup::"
+            else
+              echo "skip $pkg (no test/ yet)"
+            fi
+          done
