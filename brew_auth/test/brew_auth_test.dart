@@ -97,6 +97,59 @@ void main() {
       expect(auth.phase, AuthPhase.signedOut);
     });
 
+    test(
+      'reads unknown while signing in, never a flash of signed-out',
+      () async {
+        gotrue.answer(
+          'POST /auth/v1/signup',
+          sessionJson(id: 'anon-1', anonymous: true),
+        );
+        final auth = make(_anonFirst);
+        final phases = <AuthPhase>[];
+        auth.addListener(() => phases.add(auth.phase));
+
+        await auth.ensureSession();
+        expect(phases.first, AuthPhase.unknown);
+        expect(phases.last, AuthPhase.signedIn);
+        expect(phases, isNot(contains(AuthPhase.signedOut)));
+      },
+    );
+
+    test('on a web OAuth return, waits for the real session', () async {
+      gotrue.answer(
+        'POST /auth/v1/token?password',
+        sessionJson(id: 'u1', email: 'kj@example.com'),
+      );
+      final auth = make(
+        _anonFirst.copyWithEmail(),
+        isWeb: true,
+        pageUrl: Uri.parse('https://app.example.com/?code=abc'),
+      );
+      expect(auth.phase, AuthPhase.unknown);
+
+      final ensured = auth.ensureSession();
+      // The SDK finishing its exchange, stood in for by an email sign-in.
+      await auth.signInWithEmail('kj@example.com', 'pw');
+      await ensured;
+
+      expect(auth.isRealUser, isTrue);
+      expect(
+        gotrue.requests.where((r) => r.url.path == '/auth/v1/signup'),
+        isEmpty,
+        reason: 'no anonymous sign-in raced the real one',
+      );
+    });
+
+    test('a failed anonymous sign-in leaves the phase signed out', () async {
+      gotrue.answer('POST /auth/v1/signup', {
+        'error_code': 'unexpected_failure',
+        'msg': 'boom',
+      }, status: 500);
+      final auth = make(_anonFirst);
+      await expectLater(auth.ensureSession(), throwsA(isA<AuthException>()));
+      expect(auth.phase, AuthPhase.signedOut);
+    });
+
     test('is a no-op for apps that do not opt in', () async {
       final auth = make(_emailAndGoogle);
       await auth.ensureSession();
@@ -392,3 +445,13 @@ void main() {
 }
 
 class _RealHttp extends HttpOverrides {}
+
+extension on BrewAuthOptions {
+  /// Anonymous-first plus email, for tests that need a real sign-in path.
+  BrewAuthOptions copyWithEmail() => BrewAuthOptions(
+    emailPassword: true,
+    anonymous: anonymous,
+    oauthProviders: oauthProviders,
+    nativeRedirect: nativeRedirect,
+  );
+}

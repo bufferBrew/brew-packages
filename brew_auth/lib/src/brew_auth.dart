@@ -78,6 +78,7 @@ class BrewAuth extends ChangeNotifier {
 
   late final StreamSubscription<AuthState> _sub;
   Timer? _settleTimer;
+  Completer<void>? _settled;
   late AuthPhase _phase;
   User? _user;
 
@@ -118,6 +119,9 @@ class BrewAuth extends ChangeNotifier {
 
   void _set(User? user) {
     _settleTimer?.cancel();
+    final settled = _settled;
+    _settled = null;
+    if (settled != null && !settled.isCompleted) settled.complete();
     final phase = user == null ? AuthPhase.signedOut : AuthPhase.signedIn;
     if (identical(user, _user) && phase == _phase) return;
     _user = user;
@@ -125,17 +129,37 @@ class BrewAuth extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Completes once [phase] is no longer [AuthPhase.unknown], e.g. after a
+  /// web OAuth return has been exchanged (or given up on).
+  Future<void> settled() {
+    if (_phase != AuthPhase.unknown) return Future.value();
+    return (_settled ??= Completer<void>()).future;
+  }
+
   /// For anonymous-first apps: sign in anonymously if there's no session.
   ///
+  /// Waits for a web OAuth return to settle first: signing in anonymously
+  /// while the real session is still being exchanged would race it. While the
+  /// anonymous sign-in runs, [phase] reads [AuthPhase.unknown], so the app
+  /// doesn't flash its login screen.
+  ///
   /// Returns quietly when the project has anonymous sign-in turned off; the
-  /// phase stays [AuthPhase.signedOut] and the app shows its login screen.
+  /// phase becomes [AuthPhase.signedOut] and the app shows its login screen.
   Future<void> ensureSession() async {
-    if (!options.anonymous || _user != null) return;
+    if (!options.anonymous) return;
+    await settled();
+    if (_user != null) return;
+    _phase = AuthPhase.unknown;
+    notifyListeners();
     try {
       final res = await _client.auth.signInAnonymously();
       _set(res.user ?? _client.auth.currentUser);
     } on AuthException catch (e) {
+      _set(null);
       if (e.code == 'anonymous_provider_disabled') return;
+      rethrow;
+    } catch (_) {
+      _set(null);
       rethrow;
     }
   }

@@ -3,7 +3,7 @@ description: >-
   Sign-in for Brew apps: email/password, Google, GitHub and anonymous auth on
   web, Android, iOS and desktop, plus the router redirect and gate that keep
   signed-out users on the login screen. Logic only — no styled widgets.
-version: 0.1.0
+version: 0.1.1
 publish_to: none
 resolution: workspace
 
