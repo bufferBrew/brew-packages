@@ -27,6 +27,8 @@ class BrewSignInButton extends StatelessWidget {
     required this.onPressed,
     this.loading = false,
     this.label,
+    this.leading,
+    this.variant = BrewButtonVariant.secondary,
   });
 
   final BrewSignInKind kind;
@@ -36,15 +38,23 @@ class BrewSignInButton extends StatelessWidget {
   /// Overrides the default label, e.g. "Link Google" in settings.
   final String? label;
 
+  /// The provider's own mark, replacing the generic icon.
+  final Widget? leading;
+
+  /// Secondary by default; an app whose main way in is this provider (BREW
+  /// with Google) makes it primary.
+  final BrewButtonVariant variant;
+
   @override
   Widget build(BuildContext context) => BrewButton(
     label: label ?? kind.label,
     icon: kind.icon,
+    leading: leading,
     onPressed: onPressed,
     loading: loading,
     fullWidth: true,
     size: BrewButtonSize.lg,
-    variant: BrewButtonVariant.secondary,
+    variant: variant,
   );
 }
 

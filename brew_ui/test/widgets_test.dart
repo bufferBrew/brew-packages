@@ -75,10 +75,29 @@ void main() {
     );
     EditableText field() => tester.widget(find.byType(EditableText));
     expect(field().obscureText, isTrue);
-    await tester.tap(find.byTooltip('Show'));
+    await tester.tap(find.byTooltip('Show password'));
     await tester.pump();
     expect(field().obscureText, isFalse);
-    expect(find.byTooltip('Hide'), findsOneWidget);
+    expect(find.byTooltip('Hide password'), findsOneWidget);
+  });
+
+  testWidgets('a custom leading mark replaces the icon and stays silent', (
+    tester,
+  ) async {
+    await pumpBrew(
+      tester,
+      Center(
+        child: BrewSignInButton(
+          kind: BrewSignInKind.google,
+          variant: BrewButtonVariant.primary,
+          leading: const Text('G', key: ValueKey('mark')),
+          onPressed: () {},
+        ),
+      ),
+    );
+    expect(find.byKey(const ValueKey('mark')), findsOneWidget);
+    expect(find.byIcon(BrewSignInKind.google.icon), findsNothing);
+    expect(find.bySemanticsLabel('Continue with Google'), findsOneWidget);
   });
 
   testWidgets('BrewApiKeyField only ever shows the hint', (tester) async {

@@ -30,6 +30,7 @@ class BrewButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.icon,
+    this.leading,
     this.variant = BrewButtonVariant.primary,
     this.size = BrewButtonSize.md,
     this.loading = false,
@@ -41,6 +42,10 @@ class BrewButton extends StatelessWidget {
   /// Null disables the button.
   final VoidCallback? onPressed;
   final IconData? icon;
+
+  /// A custom mark before the label (a brand logo), used instead of [icon].
+  /// Keep it decorative: the label is what screen readers announce.
+  final Widget? leading;
   final BrewButtonVariant variant;
   final BrewButtonSize size;
 
@@ -119,7 +124,10 @@ class BrewButton extends StatelessWidget {
         : Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (icon != null) ...[
+              if (leading != null) ...[
+                ExcludeSemantics(child: leading!),
+                const SizedBox(width: 8),
+              ] else if (icon != null) ...[
                 Icon(icon, size: fontSize + 4),
                 const SizedBox(width: 8),
               ],

@@ -59,6 +59,13 @@ class BrewTextField extends StatefulWidget {
 class _BrewTextFieldState extends State<BrewTextField> {
   late bool _hidden = widget.obscure;
 
+  /// "Show password", not just "Show": with two secret fields on a screen a
+  /// bare verb doesn't say which one.
+  String get _toggleTooltip {
+    final what = widget.label?.toLowerCase() ?? 'text';
+    return _hidden ? 'Show $what' : 'Hide $what';
+  }
+
   @override
   Widget build(BuildContext context) => TextFormField(
     controller: widget.controller,
@@ -87,7 +94,7 @@ class _BrewTextFieldState extends State<BrewTextField> {
       prefixIcon: widget.prefixIcon == null ? null : Icon(widget.prefixIcon),
       suffixIcon: widget.obscure
           ? IconButton(
-              tooltip: _hidden ? 'Show' : 'Hide',
+              tooltip: _toggleTooltip,
               icon: Icon(
                 _hidden
                     ? Icons.visibility_off_outlined
