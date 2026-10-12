@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../llm/llm_repository.dart' show LlmSettingsException;
+import '../supabase/brew_supabase.dart';
 import 'connector.dart';
 
 /// Reads and writes third-party credentials through `core-connections`.
@@ -92,7 +93,7 @@ class ConnectionsRepository {
 }
 
 final connectionsRepositoryProvider = Provider<ConnectionsRepository>(
-  (ref) => ConnectionsRepository(Supabase.instance.client),
+  (ref) => ConnectionsRepository(ref.watch(brewClientProvider)),
 );
 
 /// The ecosystem's connections. App-agnostic for the same reason the LLM

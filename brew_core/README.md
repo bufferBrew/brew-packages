@@ -49,11 +49,19 @@ that on the field rather than letting a blank input silently wipe a token.
 # pubspec.yaml
 dependencies:
   brew_core:
-    path: ../packages/brew_core
+    git:
+      url: https://github.com/bufferBrew/brew-packages.git
+      path: brew_core
+      ref: v0.1.0   # bump deliberately; see the brew-packages README
 ```
 
 ```dart
-// main.dart — Riverpod must be above the app. If the app uses `provider` for
+// main.dart — resolve the backend, boot Supabase, then run.
+final config = await loadBrewConfig();          // null → show a setup screen
+if (config == null) return runApp(const SetupApp());
+await BrewSupabase.init(config, schema: 'brewwire'); // the app's own schema
+
+// Riverpod must be above the app. If the app uses `provider` for
 // its own state (WealthBrew does), ProviderScope wraps MultiProvider; the two
 // coexist fine.
 runApp(ProviderScope(
@@ -75,6 +83,37 @@ final result = await ref.read(llmClientProvider).complete(
   prompt: '…',
 );
 ```
+
+## Config and bootstrap
+
+`loadBrewConfig()` decides which Supabase backend the app uses, first hit wins:
+
+| Source | When | How |
+|---|---|---|
+| `--dart-define` | development, CI | `--dart-define-from-file=env/dev.json` |
+| hosted `/config.json` | web, Docker, static hosting | the container writes it from `SUPABASE_URL` / `SUPABASE_ANON_KEY` at start-up |
+| saved on device | prebuilt releases | the app's setup screen calls `SharedPrefsConfigStore().save(...)` |
+
+`null` means first run — show a setup screen. A half-set or malformed config
+throws `BrewConfigException`, because that is a mistake to fix.
+
+`BrewSupabase.init(config, schema:)` boots the global client with the app's own
+schema as the default and a timeout that surfaces as `BrewInitException`.
+brew_core's repositories read `brewClientProvider`, so tests override one
+provider instead of needing `Supabase.instance`.
+
+## Which apps are installed
+
+`core.apps` is the registry. On the shared project every app has a row; on a
+standalone install only the apps whose migrations ran do. Gate cross-app links
+on it so a missing app hides the link instead of opening a dead end:
+
+```dart
+if (ref.watch(appAvailableProvider('neurobrew'))) LearnThisButton(...)
+```
+
+It is false while loading and on error, and a PostgREST error (e.g. `core` not
+exposed) is not retried.
 
 ## The shape to build
 
@@ -103,6 +142,13 @@ and the WealthBrew pair of the same names in the plainer Material style.
 ## Layout
 
 ```
+lib/src/config/
+  brew_config.dart        BrewConfig, BrewConfigSource, validation
+  brew_config_loader.dart loadBrewConfig, BrewConfigStore, fetchHostedConfig
+lib/src/supabase/
+  brew_supabase.dart      BrewSupabase.init, brewClientProvider, requireUserId
+lib/src/apps/
+  app_registry.dart       core.apps → brewAppsProvider, appAvailableProvider
 lib/src/llm/
   llm_provider.dart     LlmProvider enum, curated model lists, defaults
   llm_config.dart       LlmConfigEntry, LlmTaskModel, LlmTaskSpec, LlmSettings
@@ -116,5 +162,6 @@ lib/src/connections/
 
 ## Backing migrations
 
+* `brew/BREW/supabase/migrations/0040_core_schema.sql` (`core.apps`)
 * `brew/BREW/supabase/migrations/0041_core_llm.sql`
 * `brew/BREW/supabase/migrations/0042_core_connections.sql`

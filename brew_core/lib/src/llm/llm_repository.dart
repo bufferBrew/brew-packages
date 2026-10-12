@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../supabase/brew_supabase.dart';
 import 'llm_config.dart';
 import 'llm_provider.dart';
 
@@ -153,5 +154,5 @@ class LlmRepository {
 }
 
 final llmRepositoryProvider = Provider<LlmRepository>(
-  (ref) => LlmRepository(Supabase.instance.client),
+  (ref) => LlmRepository(ref.watch(brewClientProvider)),
 );

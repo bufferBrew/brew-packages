@@ -16,6 +16,8 @@ dependencies:
   # Kept at the lowest version any consuming app pins, so adding brew_core never
   # forces an app to upgrade. Apps on newer versions resolve upward as usual.
   flutter_riverpod: ^3.3.2
+  http: ^1.2.0
+  shared_preferences: ^2.2.0
   supabase_flutter: ^2.15.3
 
 dev_dependencies:

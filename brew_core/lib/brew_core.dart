@@ -34,6 +34,9 @@
 ///   * disable OAuth connectors unless the app passes its own redirect starter.
 library;
 
+export 'src/apps/app_registry.dart';
+export 'src/config/brew_config.dart';
+export 'src/config/brew_config_loader.dart';
 export 'src/connections/connections_repository.dart';
 export 'src/connections/connector.dart';
 export 'src/llm/llm_client.dart';
@@ -42,3 +45,4 @@ export 'src/llm/llm_controller.dart';
 export 'src/llm/llm_provider.dart';
 export 'src/llm/llm_repository.dart'
     show LlmRepository, LlmSettingsException, llmRepositoryProvider;
+export 'src/supabase/brew_supabase.dart';
