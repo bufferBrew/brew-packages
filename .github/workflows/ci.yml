@@ -39,3 +39,39 @@ jobs:
               echo "skip $pkg (no test/ yet)"
             fi
           done
+
+  db:
+    name: core bundle installs on Supabase
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.115.0
+      - name: Start a minimal local Supabase
+        working-directory: ${{ runner.temp }}
+        run: |
+          supabase init --force
+          supabase start -x realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+      - name: Install psql
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Install core, re-run, refuse an edited file
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+        run: |
+          supabase/migrate/brew-migrate core=supabase/core | tee first.txt
+          grep -q 'applying     core/0001_core.sql' first.txt
+          supabase/migrate/brew-migrate core=supabase/core | tee second.txt
+          grep -q 'up to date   core/0001_core.sql' second.txt
+          edited="$RUNNER_TEMP/edited" && mkdir -p "$edited"
+          cp supabase/core/0001_core.sql "$edited/" && echo '-- edited' >> "$edited/0001_core.sql"
+          if supabase/migrate/brew-migrate core="$edited"; then
+            echo 'an edited, already-applied file was accepted' >&2; exit 1
+          fi
+      - name: Core is in place
+        run: |
+          psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -Atc \
+            "select count(*) from information_schema.tables where table_schema='core'" | grep -qx 9
+          psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -Atc \
+            "select count(*) from core.connectors" | grep -qx 13

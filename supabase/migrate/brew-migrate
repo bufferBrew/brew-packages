@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+# brew-migrate — install Brew database bundles into a Supabase Postgres.
+#
+#   DATABASE_URL=postgres://… brew-migrate [--baseline] [--dry-run] NAME=DIR …
+#
+# Applies every *.sql in each DIR, in filename order, components in the order
+# given. Pass core first, then the app(s):
+#
+#   brew-migrate core=supabase/core wire=supabase/bundle
+#
+# Why not `supabase db push`: that CLI keeps one migration ledger per
+# database, so on a database several Brew apps share, a push from one app
+# fails on every other app's versions. brew-migrate keeps its own ledger,
+# brew_meta.applied, keyed by (component, file), so apps install into one
+# database in any order, or each into its own.
+#
+# Rules it enforces:
+#   - a file applied once is never applied again (bundles are idempotent
+#     anyway, but this keeps re-runs instant and quiet);
+#   - a file whose contents changed after it was applied is an error: add a
+#     new file instead of editing an applied one;
+#   - each file runs in one transaction together with its ledger row, so a
+#     failure leaves neither behind;
+#   - a session advisory lock serialises concurrent runs (two apps installing
+#     at the same moment).
+#
+# --baseline records files as applied without running them. Use it once on a
+# database whose schema already exists (the shared hosted project, built by
+# BREW's own migrations) so later runs only apply what is new.
+# --dry-run prints what would happen. It creates the (empty) ledger table if
+# missing, and nothing else.
+#
+# Bundle files must not contain their own BEGIN/COMMIT.
+
+set -euo pipefail
+
+usage() {
+  sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//' >&2
+  exit 64
+}
+
+BASELINE=0
+DRY_RUN=0
+COMPONENTS=()
+for arg in "$@"; do
+  case "$arg" in
+    --baseline) BASELINE=1 ;;
+    --dry-run)  DRY_RUN=1 ;;
+    -h|--help)  usage ;;
+    *=*)        COMPONENTS+=("$arg") ;;
+    *)          echo "brew-migrate: expected NAME=DIR, got '$arg'" >&2; usage ;;
+  esac
+done
+[[ ${#COMPONENTS[@]} -gt 0 ]] || usage
+: "${DATABASE_URL:?brew-migrate: set DATABASE_URL}"
+
+sha256() {
+  if command -v sha256sum >/dev/null; then sha256sum "$1" | cut -d' ' -f1
+  else shasum -a 256 "$1" | cut -d' ' -f1; fi
+}
+
+# SQL literal: single quotes doubled.
+lit() { printf "'%s'" "${1//\'/\'\'}"; }
+
+script=$(mktemp)
+trap 'rm -f "$script"' EXIT
+
+{
+  echo '\set ON_ERROR_STOP on'
+  echo '\set QUIET on'
+  echo 'set client_min_messages = warning;'
+  echo "select pg_advisory_lock(hashtext('brew-migrate')) as locked \\gset"
+  cat <<'SQL'
+create schema if not exists brew_meta;
+create table if not exists brew_meta.applied (
+  component  text        not null,
+  file       text        not null,
+  checksum   text        not null,
+  baseline   boolean     not null default false,
+  applied_at timestamptz not null default now(),
+  primary key (component, file)
+);
+comment on table brew_meta.applied is
+  'Which Brew bundle files brew-migrate has applied here. Not exposed to any API role.';
+do $$ begin
+  if exists (select 1 from pg_roles where rolname = 'anon') then
+    revoke all on schema brew_meta from anon, authenticated;
+  end if;
+end $$;
+SQL
+
+  for comp in "${COMPONENTS[@]}"; do
+    name="${comp%%=*}"
+    dir="${comp#*=}"
+    [[ -d "$dir" ]] || { echo "brew-migrate: no such directory: $dir" >&2; exit 66; }
+    shopt -s nullglob
+    files=("$dir"/*.sql)
+    shopt -u nullglob
+    [[ ${#files[@]} -gt 0 ]] || { echo "brew-migrate: no .sql files in $dir" >&2; exit 66; }
+
+    for path in "${files[@]}"; do
+      file=$(basename "$path")
+      sum=$(sha256 "$path")
+      label="$name/$file"
+      where="component = $(lit "$name") and file = $(lit "$file")"
+      cat <<SQL
+select
+  exists (select 1 from brew_meta.applied where $where and checksum <> $(lit "$sum")) as changed,
+  not exists (select 1 from brew_meta.applied where $where) as todo
+\gset
+\if :changed
+  do \$\$ begin raise exception 'brew-migrate: $label changed after it was applied. Add a new file instead of editing it.'; end \$\$;
+\endif
+\if :todo
+SQL
+      if [[ $DRY_RUN -eq 1 ]]; then
+        echo "  \\echo 'would apply  $label'"
+      elif [[ $BASELINE -eq 1 ]]; then
+        echo "  \\echo 'baseline     $label'"
+        echo "  insert into brew_meta.applied (component, file, checksum, baseline) values ($(lit "$name"), $(lit "$file"), $(lit "$sum"), true);"
+      else
+        echo "  \\echo 'applying     $label'"
+        echo "  begin;"
+        echo "  \\i $path"
+        echo "  insert into brew_meta.applied (component, file, checksum) values ($(lit "$name"), $(lit "$file"), $(lit "$sum"));"
+        echo "  commit;"
+      fi
+      cat <<SQL
+\else
+  \echo 'up to date   $label'
+\endif
+SQL
+    done
+  done
+  echo "select pg_advisory_unlock(hashtext('brew-migrate')) as unlocked \\gset"
+} > "$script"
+
+psql "$DATABASE_URL" -X -q -f "$script"
