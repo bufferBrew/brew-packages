@@ -24,13 +24,13 @@ class ConnectorField {
   final String help;
 
   static ConnectorField fromJson(Map<String, dynamic> json) => ConnectorField(
-        key: (json['key'] as String?) ?? '',
-        label: (json['label'] as String?) ?? (json['key'] as String?) ?? '',
-        secret: (json['secret'] as bool?) ?? false,
-        required: (json['required'] as bool?) ?? false,
-        hint: (json['hint'] as String?) ?? '',
-        help: (json['help'] as String?) ?? '',
-      );
+    key: (json['key'] as String?) ?? '',
+    label: (json['label'] as String?) ?? (json['key'] as String?) ?? '',
+    secret: (json['secret'] as bool?) ?? false,
+    required: (json['required'] as bool?) ?? false,
+    hint: (json['hint'] as String?) ?? '',
+    help: (json['help'] as String?) ?? '',
+  );
 }
 
 /// How a connector is established.
@@ -70,15 +70,15 @@ class Connector {
   final List<ConnectorField> fields;
 
   static Connector fromJson(Map<String, dynamic> json) => Connector(
-        provider: (json['provider'] as String?) ?? '',
-        displayName: (json['display_name'] as String?) ?? '',
-        kind: ConnectorKind.parse(json['kind'] as String?),
-        icon: (json['icon'] as String?) ?? '',
-        helpUrl: (json['help_url'] as String?) ?? '',
-        fields: ((json['fields'] as List<dynamic>?) ?? const [])
-            .map((e) => ConnectorField.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    provider: (json['provider'] as String?) ?? '',
+    displayName: (json['display_name'] as String?) ?? '',
+    kind: ConnectorKind.parse(json['kind'] as String?),
+    icon: (json['icon'] as String?) ?? '',
+    helpUrl: (json['help_url'] as String?) ?? '',
+    fields: ((json['fields'] as List<dynamic>?) ?? const [])
+        .map((e) => ConnectorField.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 /// One configured connection, metadata only.
@@ -119,18 +119,19 @@ class Connection {
   }
 
   static Connection fromJson(Map<String, dynamic> json) => Connection(
-        provider: (json['provider'] as String?) ?? '',
-        accountId: (json['account_id'] as String?) ?? '',
-        accountLabel: (json['account_label'] as String?) ?? '',
-        status: (json['status'] as String?) ?? 'active',
-        secretHints: _stringMap(json['secret_hints']),
-        metadata: _stringMap(json['metadata']),
-        lastError: (json['last_error'] as String?) ?? '',
-        updatedAt: DateTime.tryParse(
-              (json['updated_at'] ?? json['created_at']) as String? ?? '',
-            ) ??
-            DateTime.fromMillisecondsSinceEpoch(0),
-      );
+    provider: (json['provider'] as String?) ?? '',
+    accountId: (json['account_id'] as String?) ?? '',
+    accountLabel: (json['account_label'] as String?) ?? '',
+    status: (json['status'] as String?) ?? 'active',
+    secretHints: _stringMap(json['secret_hints']),
+    metadata: _stringMap(json['metadata']),
+    lastError: (json['last_error'] as String?) ?? '',
+    updatedAt:
+        DateTime.tryParse(
+          (json['updated_at'] ?? json['created_at']) as String? ?? '',
+        ) ??
+        DateTime.fromMillisecondsSinceEpoch(0),
+  );
 
   static Map<String, String> _stringMap(dynamic raw) {
     if (raw is! Map) return const {};
@@ -143,14 +144,11 @@ class Connection {
 
 /// The connectors registry plus what this user has configured.
 class ConnectionsState {
-  const ConnectionsState({
-    required this.connectors,
-    required this.connections,
-  });
+  const ConnectionsState({required this.connectors, required this.connections});
 
   const ConnectionsState.empty()
-      : connectors = const [],
-        connections = const [];
+    : connectors = const [],
+      connections = const [];
 
   final List<Connector> connectors;
   final List<Connection> connections;

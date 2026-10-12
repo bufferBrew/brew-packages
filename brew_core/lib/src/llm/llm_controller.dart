@@ -19,7 +19,9 @@ class LlmSettingsController extends AsyncNotifier<LlmSettings> {
   /// so a local guess at the new state would be wrong exactly when it matters.
   Future<void> reload() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => ref.read(llmRepositoryProvider).load());
+    state = await AsyncValue.guard(
+      () => ref.read(llmRepositoryProvider).load(),
+    );
   }
 
   Future<void> saveKey({
@@ -31,7 +33,9 @@ class LlmSettingsController extends AsyncNotifier<LlmSettings> {
     String model = '',
     bool makeDefault = false,
   }) async {
-    await ref.read(llmRepositoryProvider).saveKey(
+    await ref
+        .read(llmRepositoryProvider)
+        .saveKey(
           provider: provider,
           apiKey: apiKey,
           slug: slug,
@@ -47,18 +51,17 @@ class LlmSettingsController extends AsyncNotifier<LlmSettings> {
     required LlmProvider provider,
     String slug = '',
     String model = '',
-  }) =>
-      ref.read(llmRepositoryProvider).testKey(
-            provider: provider,
-            slug: slug,
-            model: model,
-          );
+  }) => ref
+      .read(llmRepositoryProvider)
+      .testKey(provider: provider, slug: slug, model: model);
 
   Future<void> setDefault({
     required LlmProvider provider,
     String slug = '',
   }) async {
-    await ref.read(llmRepositoryProvider).setDefault(provider: provider, slug: slug);
+    await ref
+        .read(llmRepositoryProvider)
+        .setDefault(provider: provider, slug: slug);
     await reload();
   }
 
@@ -66,7 +69,9 @@ class LlmSettingsController extends AsyncNotifier<LlmSettings> {
     required LlmProvider provider,
     String slug = '',
   }) async {
-    await ref.read(llmRepositoryProvider).deleteKey(provider: provider, slug: slug);
+    await ref
+        .read(llmRepositoryProvider)
+        .deleteKey(provider: provider, slug: slug);
     await reload();
   }
 
@@ -77,7 +82,9 @@ class LlmSettingsController extends AsyncNotifier<LlmSettings> {
     String slug = '',
     String model = '',
   }) async {
-    await ref.read(llmRepositoryProvider).setTaskModel(
+    await ref
+        .read(llmRepositoryProvider)
+        .setTaskModel(
           app: app,
           task: task,
           provider: provider,
@@ -90,8 +97,8 @@ class LlmSettingsController extends AsyncNotifier<LlmSettings> {
 
 final llmSettingsProvider =
     AsyncNotifierProvider<LlmSettingsController, LlmSettings>(
-  LlmSettingsController.new,
-);
+      LlmSettingsController.new,
+    );
 
 /// Whether the user has configured any provider at all.
 ///

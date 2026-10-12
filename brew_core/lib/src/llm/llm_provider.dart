@@ -25,32 +25,32 @@ enum LlmProvider {
   String get wireName => name;
 
   String get label => switch (this) {
-        anthropic => 'Anthropic',
-        openai => 'OpenAI',
-        google => 'Google Gemini',
-        deepseek => 'DeepSeek',
-        openrouter => 'OpenRouter',
-        custom => 'Custom endpoint',
-      };
+    anthropic => 'Anthropic',
+    openai => 'OpenAI',
+    google => 'Google Gemini',
+    deepseek => 'DeepSeek',
+    openrouter => 'OpenRouter',
+    custom => 'Custom endpoint',
+  };
 
   String get blurb => switch (this) {
-        anthropic => 'Claude models',
-        openai => 'GPT models',
-        google => 'Gemini models',
-        deepseek => 'Low-cost reasoning models',
-        openrouter => 'One key, many vendors',
-        custom => 'Any OpenAI-compatible API',
-      };
+    anthropic => 'Claude models',
+    openai => 'GPT models',
+    google => 'Gemini models',
+    deepseek => 'Low-cost reasoning models',
+    openrouter => 'One key, many vendors',
+    custom => 'Any OpenAI-compatible API',
+  };
 
   /// Where the user gets a key. Empty for [custom], which has no single home.
   String get keyHelpUrl => switch (this) {
-        anthropic => 'https://console.anthropic.com/settings/keys',
-        openai => 'https://platform.openai.com/api-keys',
-        google => 'https://aistudio.google.com/apikey',
-        deepseek => 'https://platform.deepseek.com/api_keys',
-        openrouter => 'https://openrouter.ai/keys',
-        custom => '',
-      };
+    anthropic => 'https://console.anthropic.com/settings/keys',
+    openai => 'https://platform.openai.com/api-keys',
+    google => 'https://aistudio.google.com/apikey',
+    deepseek => 'https://platform.deepseek.com/api_keys',
+    openrouter => 'https://openrouter.ai/keys',
+    custom => '',
+  };
 
   /// Whether the user must supply a base URL. True only for [custom].
   bool get requiresBaseUrl => this == custom;
@@ -62,38 +62,54 @@ enum LlmProvider {
   /// it is what stops the common case being a text box the user has to know the
   /// answer for.
   List<LlmModelOption> get models => switch (this) {
-        anthropic => const [
-            LlmModelOption('claude-opus-5', 'Claude Opus 5', 'Most capable'),
-            LlmModelOption('claude-sonnet-5', 'Claude Sonnet 5', 'Balanced'),
-            LlmModelOption('claude-haiku-4-5', 'Claude Haiku 4.5', 'Fastest, cheapest'),
-          ],
-        openai => const [
-            LlmModelOption('gpt-4o', 'GPT-4o', 'Balanced'),
-            LlmModelOption('gpt-4o-mini', 'GPT-4o mini', 'Fastest, cheapest'),
-          ],
-        google => const [
-            LlmModelOption('gemini-2.5-pro', 'Gemini 2.5 Pro', 'Most capable'),
-            LlmModelOption('gemini-2.5-flash', 'Gemini 2.5 Flash', 'Fastest, cheapest'),
-          ],
-        deepseek => const [
-            LlmModelOption('deepseek-chat', 'DeepSeek Chat', 'General purpose'),
-            LlmModelOption('deepseek-reasoner', 'DeepSeek Reasoner', 'Slower, better at analysis'),
-          ],
-        openrouter => const [
-            LlmModelOption('anthropic/claude-opus-4', 'Claude Opus 4', 'via OpenRouter'),
-            LlmModelOption('openai/gpt-4o', 'GPT-4o', 'via OpenRouter'),
-          ],
-        custom => const [],
-      };
+    anthropic => const [
+      LlmModelOption('claude-opus-5', 'Claude Opus 5', 'Most capable'),
+      LlmModelOption('claude-sonnet-5', 'Claude Sonnet 5', 'Balanced'),
+      LlmModelOption(
+        'claude-haiku-4-5',
+        'Claude Haiku 4.5',
+        'Fastest, cheapest',
+      ),
+    ],
+    openai => const [
+      LlmModelOption('gpt-4o', 'GPT-4o', 'Balanced'),
+      LlmModelOption('gpt-4o-mini', 'GPT-4o mini', 'Fastest, cheapest'),
+    ],
+    google => const [
+      LlmModelOption('gemini-2.5-pro', 'Gemini 2.5 Pro', 'Most capable'),
+      LlmModelOption(
+        'gemini-2.5-flash',
+        'Gemini 2.5 Flash',
+        'Fastest, cheapest',
+      ),
+    ],
+    deepseek => const [
+      LlmModelOption('deepseek-chat', 'DeepSeek Chat', 'General purpose'),
+      LlmModelOption(
+        'deepseek-reasoner',
+        'DeepSeek Reasoner',
+        'Slower, better at analysis',
+      ),
+    ],
+    openrouter => const [
+      LlmModelOption(
+        'anthropic/claude-opus-4',
+        'Claude Opus 4',
+        'via OpenRouter',
+      ),
+      LlmModelOption('openai/gpt-4o', 'GPT-4o', 'via OpenRouter'),
+    ],
+    custom => const [],
+  };
 
   /// The model used when the user has not chosen one. Empty where no name is
   /// stable enough to hardcode — those providers make the model field required
   /// rather than guessing and failing later as a confusing 404.
   String get defaultModel => switch (this) {
-        anthropic => 'claude-opus-5',
-        deepseek => 'deepseek-chat',
-        openai || google || openrouter || custom => '',
-      };
+    anthropic => 'claude-opus-5',
+    deepseek => 'deepseek-chat',
+    openai || google || openrouter || custom => '',
+  };
 
   bool get requiresModel => defaultModel.isEmpty && this != custom;
 

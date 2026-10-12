@@ -39,23 +39,23 @@ class LlmConfigEntry {
   /// Identifies this config in the (provider, slug) key space.
   String get id => slug.isEmpty ? provider.name : '${provider.name}/$slug';
 
-  String get displayName =>
-      label.isNotEmpty ? label : provider.label;
+  String get displayName => label.isNotEmpty ? label : provider.label;
 
   String get maskedKey => keyHint.isEmpty ? '••••' : '••••$keyHint';
 
   static LlmConfigEntry fromJson(Map<String, dynamic> json) => LlmConfigEntry(
-        provider: LlmProvider.parse(json['provider'] as String?),
-        slug: (json['slug'] as String?) ?? '',
-        keyHint: (json['key_hint'] as String?) ?? '',
-        baseUrl: (json['base_url'] as String?) ?? '',
-        label: (json['label'] as String?) ?? '',
-        isDefault: (json['is_default'] as bool?) ?? false,
-        updatedAt: DateTime.tryParse(
-              (json['updated_at'] ?? json['created_at']) as String? ?? '',
-            ) ??
-            DateTime.fromMillisecondsSinceEpoch(0),
-      );
+    provider: LlmProvider.parse(json['provider'] as String?),
+    slug: (json['slug'] as String?) ?? '',
+    keyHint: (json['key_hint'] as String?) ?? '',
+    baseUrl: (json['base_url'] as String?) ?? '',
+    label: (json['label'] as String?) ?? '',
+    isDefault: (json['is_default'] as bool?) ?? false,
+    updatedAt:
+        DateTime.tryParse(
+          (json['updated_at'] ?? json['created_at']) as String? ?? '',
+        ) ??
+        DateTime.fromMillisecondsSinceEpoch(0),
+  );
 }
 
 /// Which provider+model one app uses for one of its own tasks.
@@ -81,15 +81,16 @@ class LlmTaskModel {
   /// than pinned here — model names churn faster than stored settings do.
   final String model;
 
-  String get configId => slug.isEmpty ? provider.name : '${provider.name}/$slug';
+  String get configId =>
+      slug.isEmpty ? provider.name : '${provider.name}/$slug';
 
   static LlmTaskModel fromJson(Map<String, dynamic> json) => LlmTaskModel(
-        app: (json['app'] as String?) ?? '',
-        task: (json['task'] as String?) ?? '',
-        provider: LlmProvider.parse(json['provider'] as String?),
-        slug: (json['slug'] as String?) ?? '',
-        model: (json['model'] as String?) ?? '',
-      );
+    app: (json['app'] as String?) ?? '',
+    task: (json['task'] as String?) ?? '',
+    provider: LlmProvider.parse(json['provider'] as String?),
+    slug: (json['slug'] as String?) ?? '',
+    model: (json['model'] as String?) ?? '',
+  );
 }
 
 /// A task one app can assign a model to.
@@ -114,14 +115,9 @@ class LlmTaskSpec {
 
 /// Everything the settings screen needs, in one snapshot.
 class LlmSettings {
-  const LlmSettings({
-    required this.configs,
-    required this.taskModels,
-  });
+  const LlmSettings({required this.configs, required this.taskModels});
 
-  const LlmSettings.empty()
-      : configs = const [],
-        taskModels = const [];
+  const LlmSettings.empty() : configs = const [], taskModels = const [];
 
   final List<LlmConfigEntry> configs;
   final List<LlmTaskModel> taskModels;

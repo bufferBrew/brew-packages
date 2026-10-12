@@ -47,17 +47,22 @@ class LlmClient {
     bool json = false,
   }) async {
     try {
-      final res = await _client.functions.invoke(_function, body: {
-        'app': app,
-        'task': task,
-        'prompt': prompt,
-        'system': ?system,
-        'maxTokens': ?maxTokens,
-        'json': json,
-      });
+      final res = await _client.functions.invoke(
+        _function,
+        body: {
+          'app': app,
+          'task': task,
+          'prompt': prompt,
+          'system': ?system,
+          'maxTokens': ?maxTokens,
+          'json': json,
+        },
+      );
       final data = res.data;
       if (data is! Map<String, dynamic>) {
-        throw const LlmSettingsException('The server returned an unexpected response.');
+        throw const LlmSettingsException(
+          'The server returned an unexpected response.',
+        );
       }
       return LlmCompletion(
         text: (data['text'] as String?) ?? '',
@@ -95,5 +100,6 @@ final brewAppIdProvider = Provider<String>(
 );
 
 final llmClientProvider = Provider<LlmClient>(
-  (ref) => LlmClient(Supabase.instance.client, app: ref.watch(brewAppIdProvider)),
+  (ref) =>
+      LlmClient(Supabase.instance.client, app: ref.watch(brewAppIdProvider)),
 );

@@ -116,7 +116,9 @@ class ConnectionsController extends AsyncNotifier<ConnectionsState> {
     String accountId = '',
     String accountLabel = '',
   }) async {
-    await ref.read(connectionsRepositoryProvider).save(
+    await ref
+        .read(connectionsRepositoryProvider)
+        .save(
           provider: provider,
           values: values,
           accountId: accountId,
@@ -125,17 +127,16 @@ class ConnectionsController extends AsyncNotifier<ConnectionsState> {
     await reload();
   }
 
-  Future<void> test({required String provider, String accountId = ''}) =>
-      ref.read(connectionsRepositoryProvider).test(
-            provider: provider,
-            accountId: accountId,
-          );
+  Future<void> test({required String provider, String accountId = ''}) => ref
+      .read(connectionsRepositoryProvider)
+      .test(provider: provider, accountId: accountId);
 
   Future<void> disconnect({
     required String provider,
     String accountId = '',
   }) async {
-    await ref.read(connectionsRepositoryProvider)
+    await ref
+        .read(connectionsRepositoryProvider)
         .disconnect(provider: provider, accountId: accountId);
     await reload();
   }
@@ -143,5 +144,5 @@ class ConnectionsController extends AsyncNotifier<ConnectionsState> {
 
 final connectionsProvider =
     AsyncNotifierProvider<ConnectionsController, ConnectionsState>(
-  ConnectionsController.new,
-);
+      ConnectionsController.new,
+    );
