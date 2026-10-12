@@ -10,7 +10,7 @@ import 'dart:io';
 /// suspended while the user is in Chrome, so the server is gone by the time
 /// the redirect arrives (`ERR_CONNECTION_REFUSED`).
 ///
-/// Binds an ephemeral port, calls [launch] with the redirect URL, waits for
+/// Binds [port] (0, the default, picks a free one), calls [launch] with the redirect URL, waits for
 /// the browser to come back, runs [complete] on the callback URL, and only
 /// then answers the browser, so the tab can say whether it worked.
 Future<T> runLoopbackRedirect<T>({
@@ -18,8 +18,9 @@ Future<T> runLoopbackRedirect<T>({
   required Future<T> Function(Uri callback) complete,
   required Duration timeout,
   required String appName,
+  int port = 0,
 }) async {
-  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
   try {
     final redirectTo = 'http://localhost:${server.port}';
     await launch(redirectTo);

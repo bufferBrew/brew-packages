@@ -4,4 +4,5 @@ Future<T> runLoopbackRedirect<T>({
   required Future<T> Function(Uri callback) complete,
   required Duration timeout,
   required String appName,
+  int port = 0,
 }) => throw UnsupportedError('Loopback OAuth is not available on web');

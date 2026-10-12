@@ -206,7 +206,10 @@ class BrewAuth extends ChangeNotifier {
       );
       return;
     }
-    if (_isDesktop) return _desktopLoopback(provider);
+    if (_isDesktop) return _loopback(provider);
+    if (options.nativeLoopbackPort case final port?) {
+      return _loopback(provider, port: port);
+    }
     if (options.nativeRedirect == null) {
       throw StateError(
         'OAuth on Android/iOS needs BrewAuthOptions.nativeRedirect '
@@ -224,10 +227,14 @@ class BrewAuth extends ChangeNotifier {
 
   Future<void> signOut() => _client.auth.signOut();
 
-  Future<void> _desktopLoopback(OAuthProvider provider) async {
+  /// Desktop always; Android/iOS when [BrewAuthOptions.nativeRedirect] is a
+  /// loopback URL. Exchanged here with the current session attached, so an
+  /// anonymous user is upgraded, not replaced.
+  Future<void> _loopback(OAuthProvider provider, {int port = 0}) async {
     final pkce = Pkce.generate();
     final refresh = await runLoopbackRedirect<String>(
       appName: options.appName,
+      port: port,
       timeout: options.oauthTimeout,
       launch: (redirectTo) => _open(
         authorizeUrl(

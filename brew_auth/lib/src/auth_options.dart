@@ -31,8 +31,15 @@ class BrewAuthOptions {
   /// off, the app falls back to its login screen.
   final bool anonymous;
 
-  /// Custom-scheme deep link OAuth returns to on Android and iOS, e.g.
-  /// `com.bufferbrew.brewwire://login-callback`.
+  /// Where OAuth returns to on Android and iOS: a custom-scheme deep link,
+  /// e.g. `com.bufferbrew.brewwire://login-callback`, or a loopback URL with a
+  /// fixed port, e.g. `http://localhost:8899`.
+  ///
+  /// Prefer the deep link: Android can suspend a backgrounded app's network
+  /// while the user is in the browser, killing a loopback listener. Use the
+  /// loopback form only where the project's redirect allowlist won't accept
+  /// the custom scheme (brewfeed's case); Supabase allows any
+  /// `http://localhost:*` without an allowlist entry.
   ///
   /// Must match three things or the round trip dead-ends after the account
   /// picker: the intent filter in `AndroidManifest.xml` (and the URL type in
@@ -56,4 +63,13 @@ class BrewAuthOptions {
   final Duration oauthTimeout;
 
   String get resolvedWebRedirect => webRedirect?.call() ?? Uri.base.origin;
+
+  /// The port when [nativeRedirect] is an `http://localhost:<port>` loopback
+  /// URL, else null.
+  int? get nativeLoopbackPort {
+    final uri = Uri.tryParse(nativeRedirect ?? '');
+    if (uri == null || uri.scheme != 'http') return null;
+    if (uri.host != 'localhost' && uri.host != '127.0.0.1') return null;
+    return uri.hasPort ? uri.port : null;
+  }
 }

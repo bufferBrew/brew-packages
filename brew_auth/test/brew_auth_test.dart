@@ -335,6 +335,63 @@ void main() {
       expect(auth.accountLabel, 'desk@example.com');
     });
 
+    test(
+      'Android with a loopback redirect uses that fixed port and links',
+      () async {
+        final anon = sessionJson(id: 'anon-1', anonymous: true);
+        gotrue.answer('POST /auth/v1/signup', anon);
+        gotrue.routes['POST /auth/v1/token?pkce'] = (req) {
+          expect(
+            req.headers['Authorization'],
+            'Bearer ${anon['access_token']}',
+          );
+          return FakeGoTrue.json({'refresh_token': 'r-loop'}, 200, req);
+        };
+        gotrue.answer(
+          'POST /auth/v1/token?refresh_token',
+          sessionJson(id: 'anon-1', email: 'kj@example.com'),
+        );
+        const port = 18899;
+        final auth = make(
+          const BrewAuthOptions(
+            anonymous: true,
+            oauthProviders: [OAuthProvider.github],
+            nativeRedirect: 'http://localhost:$port',
+          ),
+          launch: (url) async {
+            launched.add(url);
+            final back = url.queryParameters['redirect_to']!;
+            expect(back, 'http://localhost:$port');
+            unawaited(
+              HttpOverrides.runWithHttpOverrides(
+                () => http.get(Uri.parse('$back/?code=loop-code')),
+                _RealHttp(),
+              ),
+            );
+            return true;
+          },
+        );
+        await auth.ensureSession();
+
+        await auth.signInWithOAuth(OAuthProvider.github);
+
+        expect(auth.user?.id, 'anon-1', reason: 'upgraded, not replaced');
+        expect(auth.isRealUser, isTrue);
+      },
+    );
+
+    test('nativeLoopbackPort only for http localhost URLs', () {
+      BrewAuthOptions o(String r) => BrewAuthOptions(nativeRedirect: r);
+      expect(o('http://localhost:8899').nativeLoopbackPort, 8899);
+      expect(o('http://127.0.0.1:8899').nativeLoopbackPort, 8899);
+      expect(
+        o('com.bufferbrew.brew://login-callback').nativeLoopbackPort,
+        isNull,
+      );
+      expect(o('https://localhost:8899').nativeLoopbackPort, isNull);
+      expect(o('http://example.com:8899').nativeLoopbackPort, isNull);
+    });
+
     test('a browser that will not open is an error', () {
       final auth = make(_emailAndGoogle, launch: (_) async => false);
       expect(
