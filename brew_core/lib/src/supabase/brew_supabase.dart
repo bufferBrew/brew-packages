@@ -50,6 +50,15 @@ class BrewInitException implements Exception {
   String toString() => message;
 }
 
+/// The backend this app booted against. Override in the root `ProviderScope`
+/// with the [BrewConfig] passed to [BrewSupabase.init]; brew_auth needs it for
+/// OAuth flows the SDK can't run itself.
+final brewConfigProvider = Provider<BrewConfig>(
+  (ref) => throw UnimplementedError(
+    'Override brewConfigProvider with the config from loadBrewConfig()',
+  ),
+);
+
 /// The client brew_core's repositories use. Override in tests, or to hand
 /// brew_core a client that isn't `Supabase.instance`.
 final brewClientProvider = Provider<SupabaseClient>(

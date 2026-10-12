@@ -20,10 +20,10 @@ dependencies:
 
 | Package | Purpose |
 |---|---|
-| [`brew_core`](brew_core) | LLM config/keys and third-party connections against the shared `core.*` Supabase schema. UI-free by design. |
+| [`brew_core`](brew_core) | Backend config, Supabase bootstrap, the `core.apps` registry, LLM config/keys and third-party connections against the shared `core.*` schema. UI-free by design. |
+| [`brew_auth`](brew_auth) | Sign-in (email, Google, GitHub, anonymous) on web, Android, iOS and desktop; router redirect and auth gate. Logic only. |
 
-Planned: `brew_data` (Supabase client + schema provider, logging, auth, prefs sync)
-and `brew_ui` (theme tokens and shared widget primitives).
+Planned: `brew_ui` (theme tokens and shared widget primitives).
 
 ## Rules
 

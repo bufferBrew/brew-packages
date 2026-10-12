@@ -1,0 +1,33 @@
+name: brew_auth
+description: >-
+  Sign-in for Brew apps: email/password, Google, GitHub and anonymous auth on
+  web, Android, iOS and desktop, plus the router redirect and gate that keep
+  signed-out users on the login screen. Logic only — no styled widgets.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Same repo, so a git dep on brew-packages resolves this too.
+  brew_core:
+    path: ../brew_core
+  # Pinned to the lowest version any Brew app uses (see brew-packages README).
+  app_links: ^7.2.0
+  crypto: ^3.0.6
+  flutter_riverpod: ^3.3.2
+  http: ^1.2.0
+  shared_preferences: ^2.2.0
+  supabase_flutter: ^2.15.3
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:

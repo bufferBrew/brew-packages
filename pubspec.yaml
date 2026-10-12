@@ -7,3 +7,4 @@ environment:
 
 workspace:
   - brew_core
+  - brew_auth
