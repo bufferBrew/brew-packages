@@ -22,8 +22,7 @@ dependencies:
 |---|---|
 | [`brew_core`](brew_core) | Backend config, Supabase bootstrap, the `core.apps` registry, LLM config/keys and third-party connections against the shared `core.*` schema. UI-free by design. |
 | [`brew_auth`](brew_auth) | Sign-in (email, Google, GitHub, anonymous) on web, Android, iOS and desktop; router redirect and auth gate. Logic only. |
-
-Planned: `brew_ui` (theme tokens and shared widget primitives).
+| [`brew_ui`](brew_ui) | Design tokens, `buildBrewTheme`, and primitives for buttons, cards, states, auth and settings. Each app supplies its own palette. |
 
 ## Rules
 

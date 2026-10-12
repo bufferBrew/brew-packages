@@ -1,0 +1,39 @@
+name: Regenerate golden baselines
+
+# Manual only. Regenerating overwrites the bytes a visual regression would be
+# caught by, so a human runs this, downloads the artifact, looks at the
+# images, and commits them deliberately (same rule as BREW's goldens.yml).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # Must match ci.yml, or every golden fails as a pixel mismatch.
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.8
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Regenerate brew_ui goldens
+        working-directory: brew_ui
+        run: flutter test test/goldens --update-goldens
+      - name: Provenance
+        run: |
+          {
+            echo "flutter: $(flutter --version | head -1)"
+            echo "os: $(lsb_release -ds) $(uname -m)"
+            echo "commit: $GITHUB_SHA"
+          } | tee brew_ui/test/goldens/baselines/PROVENANCE.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: brew_ui-goldens
+          path: brew_ui/test/goldens/baselines/
+          if-no-files-found: error

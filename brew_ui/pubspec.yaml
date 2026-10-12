@@ -1,0 +1,27 @@
+name: brew_ui
+description: >-
+  Design tokens and widget primitives for Brew apps: colour roles, type scale,
+  spacing, motion and shape as ThemeExtensions, a theme builder, and
+  unopinionated building blocks for buttons, cards, states, auth and settings.
+  Each app supplies its own palette, so apps look related, not identical.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.2
+
+# No Brew dependencies on purpose: brew_ui renders, brew_core/brew_auth do.
+# Widgets take callbacks, so an app wires them to whatever backend it has.
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.3.2
+  shared_preferences: ^2.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:

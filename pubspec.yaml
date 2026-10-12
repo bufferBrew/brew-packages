@@ -8,3 +8,4 @@ environment:
 workspace:
   - brew_core
   - brew_auth
+  - brew_ui
