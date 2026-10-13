@@ -24,6 +24,13 @@ dependencies:
 | [`brew_auth`](brew_auth) | Sign-in (email, Google, GitHub, anonymous) on web, Android, iOS and desktop; router redirect and auth gate. Logic only. |
 | [`brew_ui`](brew_ui) | Design tokens, `buildBrewTheme`, and primitives for buttons, cards, states, auth and settings. Each app supplies its own palette. |
 
+## Also here
+
+| | |
+|---|---|
+| [`supabase/`](supabase) | The shared `core` schema bundle and `brew-migrate`, which installs it and an app's own bundle into any Supabase |
+| [`deploy/`](deploy) | Docker: the web image and a self-hosted Supabase stack, synced into every app; the reusable release workflow |
+
 ## Rules
 
 - **Pin dependencies low.** `brew_core` targets `flutter_riverpod: ^3.3.2` and
