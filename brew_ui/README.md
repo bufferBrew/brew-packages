@@ -39,8 +39,33 @@ widgets work in an app whose theme hasn't been migrated yet.
 | **Primitives** | `BrewButton`, `BrewCard`, `BrewPressable`, `BrewTextField`, `BrewApiKeyField`, `BrewSectionHeader`, `BrewStatusPill`, `BrewShimmer`, `BrewEmptyState`, `BrewErrorState` + `classifyError`, `showBrewConfirmDialog`, `showBrewTextInputDialog`, `BrewContentWidth` |
 | **Auth parts** | `BrewAuthCard`, `BrewSignInButton`, `BrewEmailPasswordForm`, `BrewDividerLabel`, `BrewBackendSetupForm` (first run of a prebuilt release) |
 | **Settings parts** | `BrewSettingsSection`, `BrewSettingsTile`, `BrewThemeModeTile`, `BrewAccountSection`, `BrewCredentialTile` (the collapsed-card key form brew_core's README describes) |
+| **Identity** | `BrewAppIdentity` (name, accent, glyph) + `BrewIdentityScope`, `BrewAppMark`, `BrewAboutTile` / `showBrewAboutDialog`, `BrewFooter` ("Synapse · a Brew app"), `BrewAppSwitcher` / `showBrewAppSwitcher` + `brewIconByName` for `core.apps` rows |
 | **Shell** | `BrewAdaptiveShell`: bottom bar → rail → extended rail by width |
 | **Gallery** | `BrewComponentGallery`: everything on one page, for a debug route |
+
+Every app presents itself the same way. Install its identity once, in
+`MaterialApp.builder` so dialogs see it too, and put `BrewAboutTile` in
+settings:
+
+```dart
+const identity = BrewAppIdentity(
+  key: 'synapse', // its core.apps key
+  name: 'Synapse',
+  accent: Color(0xFFA78BFA),
+  glyph: AssetImage('assets/branding/app_icon_rounded.png'),
+);
+
+MaterialApp(
+  builder: (context, child) =>
+      BrewIdentityScope(identity: identity, child: child!),
+  …
+);
+```
+
+The switcher takes plain `BrewSwitcherApp` values, since brew_ui doesn't
+depend on brew_core. Map brew_core's `brewAppsProvider` rows onto them and
+open the chosen app however suits the platform (`url_launcher`, say). The
+launcher icon comes from the template in [`../branding`](../branding).
 
 A login screen, for example, is the app's own composition:
 

@@ -15,6 +15,8 @@ library;
 
 export 'src/auth/brew_auth_parts.dart';
 export 'src/gallery.dart';
+export 'src/identity/brew_app_switcher.dart';
+export 'src/identity/brew_identity.dart';
 export 'src/settings/brew_settings_parts.dart';
 export 'src/shell/brew_adaptive_shell.dart';
 export 'src/theme/brew_theme.dart';
