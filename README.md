@@ -22,12 +22,13 @@ dependencies:
 |---|---|
 | [`brew_core`](brew_core) | Backend config, Supabase bootstrap, the `core.apps` registry, LLM config/keys and third-party connections against the shared `core.*` schema. UI-free by design. |
 | [`brew_auth`](brew_auth) | Sign-in (email, Google, GitHub, anonymous) on web, Android, iOS and desktop; router redirect and auth gate. Logic only. |
-| [`brew_ui`](brew_ui) | Design tokens, `buildBrewTheme`, and primitives for buttons, cards, states, auth and settings. Each app supplies its own palette. |
+| [`brew_ui`](brew_ui) | Design tokens, `buildBrewTheme`, and primitives for buttons, cards, states, auth and settings. Each app supplies its own palette. Also the shared identity: `BrewAppIdentity`, the "a Brew app" about tile and footer, and the app switcher. |
 
 ## Also here
 
 | | |
 |---|---|
+| [`branding/`](branding) | The launcher-icon template and `make-icon.sh`: an app supplies its glyph and accent, the template does the rest |
 | [`supabase/`](supabase) | The shared `core` schema bundle and `brew-migrate`, which installs it and an app's own bundle into any Supabase |
 | [`deploy/`](deploy) | Docker: the web image and a self-hosted Supabase stack, synced into every app; the reusable release workflow |
 

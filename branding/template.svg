@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Brew launcher-icon template. make-icon.sh fills the {{…}} slots; read
+  README.md before editing by hand.
+
+  1024 x 1024, full bleed: platforms apply their own mask (Android adaptive
+  circle/squircle, iOS superellipse, the web's maskable crop), so the square
+  is never pre-rounded here. The rounded variant adds its own clip.
+
+  Layers, bottom to top:
+    1. {{BACKGROUND}}  – Brew ink #060811 by default, or the app's accent.
+    2. accent glow     – a soft radial wash of {{ACCENT}} behind the glyph.
+    3. glyph           – the app's white line art with its neon accents,
+                         transparent background, centred in the middle
+                         {{GLYPH_SIZE}}px (62% — inside Android's 66% safe zone).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="46%" r="52%">
+      <stop offset="0" stop-color="{{ACCENT}}" stop-opacity="{{GLOW}}"/>
+      <stop offset="1" stop-color="{{ACCENT}}" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="shape"><rect width="1024" height="1024" rx="{{RADIUS}}"/></clipPath>
+  </defs>
+  <g clip-path="url(#shape)">
+    <rect width="1024" height="1024" fill="{{BACKGROUND}}" fill-opacity="{{BG_OPACITY}}"/>
+    <rect width="1024" height="1024" fill="url(#glow)" fill-opacity="{{BG_OPACITY}}"/>
+    <image x="{{GLYPH_X}}" y="{{GLYPH_X}}" width="{{GLYPH_SIZE}}" height="{{GLYPH_SIZE}}"
+           preserveAspectRatio="xMidYMid meet" xlink:href="{{GLYPH_HREF}}"/>
+  </g>
+  {{RIM}}
+</svg>

@@ -1,0 +1,23 @@
+# Brew launcher icons — built by brew-packages/branding/make-icon.sh.
+# Regenerate the platform icons with: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "{{OUT}}/app_icon.png"
+  android: true
+  # Glyph-only foreground over the flat background: the launcher's mask
+  # (circle, squircle) cuts the background, never the glyph, which already
+  # sits inside the 66% safe zone — so no extra inset.
+  adaptive_icon_background: "{{BACKGROUND}}"
+  adaptive_icon_foreground: "{{OUT}}/app_icon_foreground.png"
+  adaptive_icon_foreground_inset: 0
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "{{OUT}}/app_icon.png"
+    background_color: "{{BACKGROUND}}"
+    theme_color: "{{BACKGROUND}}"
+  windows:
+    generate: true
+    icon_size: 256
+  macos:
+    generate: true
