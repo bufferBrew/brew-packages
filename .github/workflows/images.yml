@@ -33,7 +33,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ startsWith(github.ref, 'refs/tags/v') }}
           tags: |
-            ghcr.io/bufferbrewlabs/brew-migrate:${{ github.ref_name }}
+            ghcr.io/bufferbrewlabs/brew-migrate:${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'pr-check' }}
             ghcr.io/bufferbrewlabs/brew-migrate:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
