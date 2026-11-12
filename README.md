@@ -1,6 +1,6 @@
 # brew-packages
 
-Shared Dart/Flutter packages for the **Brew** ecosystem (bufferBrew org).
+Shared Dart/Flutter packages for the **Brew** ecosystem (bufferbrewlabs org).
 
 Every Brew app is its own independently-clonable repository. Anything more than one
 app needs lives here and is consumed by **git dependency**, never by a `path:`
@@ -11,7 +11,7 @@ cannot build.
 dependencies:
   brew_core:
     git:
-      url: https://github.com/bufferBrew/brew-packages.git
+      url: https://github.com/bufferbrewlabs/brew-packages.git
       path: brew_core
       ref: 9102a5b4101a92621e7005c2f20445a5d180d3df # v0.2.2
 ```
@@ -48,4 +48,4 @@ dependencies:
   comment). `brew_auth` and `brew_ui` reach `brew_core` through an in-repo
   path, which pub records as the commit SHA; an app that names the tag instead
   has "two sources" for `brew_core` and fails to resolve. Get the SHA with
-  `git ls-remote https://github.com/bufferBrew/brew-packages.git 'refs/tags/vX.Y.Z^{}'`.
+  `git ls-remote https://github.com/bufferbrewlabs/brew-packages.git 'refs/tags/vX.Y.Z^{}'`.

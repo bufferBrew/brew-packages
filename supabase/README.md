@@ -29,7 +29,7 @@ or, with nothing but Docker:
 ```bash
 docker run --rm -e DATABASE_URL=postgres://… \
   -v "$PWD/supabase/bundle:/bundles/app" \
-  ghcr.io/bufferbrew/brew-migrate core=/bundles/core wire=/bundles/app
+  ghcr.io/bufferbrewlabs/brew-migrate core=/bundles/core wire=/bundles/app
 ```
 
 Then expose the app's schema (and `core`) to the API, or every request fails

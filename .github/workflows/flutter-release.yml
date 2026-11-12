@@ -5,7 +5,7 @@ name: Flutter release (reusable)
 #
 #   jobs:
 #     release:
-#       uses: bufferBrew/brew-packages/.github/workflows/flutter-release.yml@<tag>
+#       uses: bufferbrewlabs/brew-packages/.github/workflows/flutter-release.yml@<tag>
 #       with:
 #         app: brewwire
 #         platforms: android,web,windows
@@ -87,8 +87,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.publish }}
           tags: |
-            ghcr.io/bufferbrew/${{ inputs.app }}-web:${{ env.VERSION }}
-            ghcr.io/bufferbrew/${{ inputs.app }}-web:latest
+            ghcr.io/bufferbrewlabs/${{ inputs.app }}-web:${{ env.VERSION }}
+            ghcr.io/bufferbrewlabs/${{ inputs.app }}-web:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
@@ -215,6 +215,6 @@ jobs:
 
           - Android: install the .apk.
           - Windows / Linux / macOS: unzip and run. The macOS app is unsigned: right-click, Open, the first time.
-          - Web / Docker: ghcr.io/bufferbrew/${APP}-web:${VERSION} (see the repo's compose.yml)."
+          - Web / Docker: ghcr.io/bufferbrewlabs/${APP}-web:${VERSION} (see the repo's compose.yml)."
           gh release create "$VERSION" dist/* --repo "$GITHUB_REPOSITORY" --title "$APP $VERSION" --notes "$notes" \
             || gh release upload "$VERSION" dist/* --repo "$GITHUB_REPOSITORY" --clobber
