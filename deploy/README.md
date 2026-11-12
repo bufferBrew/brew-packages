@@ -14,7 +14,7 @@ deploy/
 ## For someone installing one app
 
 ```bash
-git clone https://github.com/bufferBrew/BrewWire && cd BrewWire
+git clone https://github.com/bufferbrewlabs/BrewWire && cd BrewWire
 cp .env.example .env
 deploy/supabase/gen-env.sh >> .env       # database password, JWT secret, keys
 docker compose --profile supabase up -d
@@ -22,7 +22,7 @@ docker compose --profile supabase up -d
 
 App on http://localhost:3000, Supabase API on http://localhost:8000. That's
 the whole thing: no Flutter, no Supabase account. The web image is pulled
-from `ghcr.io/bufferbrew/<app>-web`; `brew-migrate` installs the database
+from `ghcr.io/bufferbrewlabs/<app>-web`; `brew-migrate` installs the database
 before the API starts.
 
 **Against an existing Supabase** (hosted, or a stack shared by several apps):
@@ -88,8 +88,8 @@ set there's no config.json (a real 404), and the app asks for a backend.
 `.github/workflows/flutter-release.yml` is reusable. An app calls it with its
 name and platforms; on a `v*` tag it publishes a GitHub Release (APK,
 Windows/Linux zip or tarball, unsigned macOS app, web zip) and pushes
-`ghcr.io/bufferbrew/<app>-web`. On a pull request it only builds. Native
+`ghcr.io/bufferbrewlabs/<app>-web`. On a pull request it only builds. Native
 builds bake in a default backend when the app repo has the
 `RELEASE_SUPABASE_URL` / `RELEASE_SUPABASE_ANON_KEY` secrets.
 
-`images.yml` publishes `ghcr.io/bufferbrew/brew-migrate:<tag>` the same way.
+`images.yml` publishes `ghcr.io/bufferbrewlabs/brew-migrate:<tag>` the same way.

@@ -3,7 +3,7 @@
 #
 #   docker run --rm -e DATABASE_URL=postgres://… \
 #     -v "$PWD/supabase/bundle:/bundles/app" \
-#     ghcr.io/bufferbrew/brew-migrate core=/bundles/core app=/bundles/app
+#     ghcr.io/bufferbrewlabs/brew-migrate core=/bundles/core app=/bundles/app
 #
 # The core bundle ships inside the image at /bundles/core, at the version this
 # image was built from.
