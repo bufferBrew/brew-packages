@@ -1,4 +1,7 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import '../widgets/brew_motion.dart';
 
 /// 4px-base spacing scale. Every gap and inset comes from here; no ad-hoc
 /// `SizedBox(height: 13)`.
@@ -54,6 +57,33 @@ abstract final class BrewMotion {
   static const Curve exit = Curves.easeInCubic;
   static const Curve transition = Curves.easeInOutCubic;
   static const Curve emphasised = Cubic(0.2, 0.0, 0.0, 1.0);
+
+  /// One slow breath of a loading placeholder (skeleton shimmer, pulse).
+  static const Duration pulse = Duration(milliseconds: 900);
+
+  /// For things that move or scale and may be interrupted mid-flight.
+  static final SpringDescription spring = SpringDescription.withDampingRatio(
+    mass: 1,
+    stiffness: 380,
+    ratio: 0.9,
+  );
+
+  /// Route transitions for `ThemeData.pageTransitionsTheme`: list to detail
+  /// slides forward as it fades in on every platform, Android (not web) gets
+  /// the system's predictive back, and every platform falls back to a plain
+  /// cross-fade under [reduced] motion.
+  static final PageTransitionsTheme pageTransitions = PageTransitionsTheme(
+    builders: {
+      for (final platform in TargetPlatform.values)
+        platform: platform == TargetPlatform.android && !kIsWeb
+            ? const BrewReducedMotionTransitionsBuilder(
+                PredictiveBackPageTransitionsBuilder(),
+              )
+            : const BrewReducedMotionTransitionsBuilder(
+                FadeForwardsPageTransitionsBuilder(),
+              ),
+    },
+  );
 
   /// The platform asked for reduced motion, or a screen reader is driving.
   static bool reduced(BuildContext context) {

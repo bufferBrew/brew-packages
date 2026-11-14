@@ -34,7 +34,7 @@ widgets work in an app whose theme hasn't been migrated yet.
 
 | | |
 |---|---|
-| **Tokens** | `BrewColors` (surface tiers, accent/secondary, 3 text levels, status + readable `…Text` shades, `BrewTone`), `BrewTypography`, `BrewShape`, `BrewSpacing`, `BrewBreakpoints`, `BrewMotion` (with reduced-motion checks) |
+| **Tokens** | `BrewColors` (surface tiers, accent/secondary, 3 text levels, status + readable `…Text` shades, `BrewTone`), `BrewTypography`, `BrewShape`, `BrewSpacing`, `BrewBreakpoints`, `BrewMotion` (with reduced-motion checks, `pulse`, a `spring`, and `pageTransitions` for the theme). `BrewReducedMotionTransitionsBuilder` and `BrewFadeThrough` (tab switch) build on it |
 | **Theme** | `buildBrewTheme`, `ThemeModeStore` + `brewThemeModeProvider` |
 | **Primitives** | `BrewButton`, `BrewCard`, `BrewPressable`, `BrewTextField`, `BrewApiKeyField`, `BrewSectionHeader`, `BrewStatusPill`, `BrewShimmer`, `BrewEmptyState`, `BrewErrorState` + `classifyError`, `showBrewConfirmDialog`, `showBrewTextInputDialog`, `BrewContentWidth` |
 | **Auth parts** | `BrewAuthCard`, `BrewSignInButton`, `BrewEmailPasswordForm`, `BrewDividerLabel`, `BrewBackendSetupForm` (first run of a prebuilt release) |

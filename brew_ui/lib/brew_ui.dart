@@ -27,5 +27,6 @@ export 'src/tokens/brew_typography.dart';
 export 'src/widgets/brew_button.dart';
 export 'src/widgets/brew_dialogs.dart';
 export 'src/widgets/brew_fields.dart';
+export 'src/widgets/brew_motion.dart';
 export 'src/widgets/brew_states.dart';
 export 'src/widgets/brew_surfaces.dart';
